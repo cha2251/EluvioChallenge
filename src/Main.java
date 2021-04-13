@@ -22,6 +22,7 @@ public class Main {
                     strands.add(newStrands[1]);
                 }
                 if(strands.get(0).getBytes() == newStrands[0].getBytes()){ //Found another file that matches our current longest string
+                    System.out.println("HIT");
                     strands.add(newStrands[0]);
                     strands.add(newStrands[1]);
                 }
@@ -31,6 +32,9 @@ public class Main {
         System.out.println("Length: "+strands.get(0).length);
         for (ByteStrand strand: strands) { //print output
             System.out.println(strand);
+            //for (byte b : strand.getBytes()){ //print bytes for a check
+            //    System.out.print(" "+b);
+            //}
         }
     }
 
@@ -50,7 +54,7 @@ public class Main {
         for (int i = 0; i < file1.bytes.length-1; i++){
             for (int j = 0; j < file2.bytes.length-1; j++){
                 if (i+currLength < file1.bytes.length && file1.bytes[i+currLength] == file2.bytes[j]){ //found two equeal bytes. Have to increase i to keep up with j
-                    if (inSame){//aready in a substring? add to length
+                    if (inSame){//already in a substring? add to length
                         currLength++;
                     }else { //otherwise, start one
                         currOffset1 = i;
@@ -62,15 +66,12 @@ public class Main {
                     inSame = false;
                     if(currLength > length){ //found a longer substring, update the stored vals
                         offset1 = currOffset1;
-                        offset2 = currOffset2;
+                        offset2 = currOffset2+1;
                         length = currLength;
                     }
                 }
             }
         }
-        System.out.println(offset1);
-        System.out.println(offset2);
-        System.out.println(length);
         return new ByteStrand[]{new ByteStrand(file1,offset1,length), new ByteStrand(file2,offset2,length)};
     }
 
