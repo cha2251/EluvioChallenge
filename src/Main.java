@@ -6,7 +6,7 @@ import java.util.Arrays;
 public class Main {
 
     public static void main(String [] args) throws IOException {
-        ArrayList<Offset> offsets = new ArrayList<Offset>();
+        ArrayList<ByteStrand> strands = new ArrayList<ByteStrand>();
 
         ArrayList<ByteFile> byteLists = new ArrayList<ByteFile>();
         for (int i = 0; i < args.length; i++){ //read in all lists of bytes. Make more sense to do comparisons as they are read in??
@@ -15,8 +15,22 @@ public class Main {
 
         for (int i = 0; i < byteLists.size()-1; i++){ //compare each file to each other file
             for (int j = i+1; j < byteLists.size(); j++){
-                compareLists(byteLists.get(i), byteLists.get(j));
+                ByteStrand[] newStrands = compareLists(byteLists.get(i), byteLists.get(j));
+                if(strands.size() == 0 || strands.get(0).length < newStrands[0].length){//Found new longest strand
+                    strands.clear();
+                    strands.add(newStrands[0]);
+                    strands.add(newStrands[1]);
+                }
+                if(strands.get(0).getBytes() == newStrands[0].getBytes()){ //Found another file that matches our current longest string
+                    strands.add(newStrands[0]);
+                    strands.add(newStrands[1]);
+                }
             }
+        }
+
+        System.out.println("Length: "+strands.get(0).length);
+        for (ByteStrand strand: strands) { //print output
+            System.out.println(strand);
         }
     }
 
@@ -25,7 +39,7 @@ public class Main {
         return in.readAllBytes();
     }
 
-    private static Offset[] compareLists(ByteFile file1, ByteFile file2) {
+    private static ByteStrand[] compareLists(ByteFile file1, ByteFile file2) {
         int offset1 = 0;
         int offset2 = 0;
         int length = 0;
@@ -33,9 +47,9 @@ public class Main {
         int currOffset2 = 0;
         int currLength = 0;
         boolean inSame = false; //flag
-        for (int i = 0; i < file1.bytes.length; i++){
-            for (int j = 0; j < file2.bytes.length; j++){
-                if (file1.bytes[i] == file1.bytes[j]){ //found two equeal bytes
+        for (int i = 0; i < file1.bytes.length-1; i++){
+            for (int j = 0; j < file2.bytes.length-1; j++){
+                if (file1.bytes[i] == file2.bytes[j]){ //found two equeal bytes
                     if (inSame){//aready in a substring? add to length
                         currLength++;
                     }else { //otherwise, start one
@@ -54,7 +68,10 @@ public class Main {
                 }
             }
         }
-        return new Offset[]{new Offset(file1,offset1,length), new Offset(file2,offset2,length)};
+        System.out.println(offset1);
+        System.out.println(offset2);
+        System.out.println(length);
+        return new ByteStrand[]{new ByteStrand(file1,offset1,length), new ByteStrand(file2,offset2,length)};
     }
 
     private static byte[] substring(byte[] bytes, int start, int end){
@@ -70,17 +87,22 @@ public class Main {
         }
     }
 
-    public static class Offset{
+    public static class ByteStrand{
         public int offset = 0;
         public int length = 0;
         public ByteFile file;
-        public Offset(ByteFile f, int o, int l){
+        public ByteStrand(ByteFile f, int o, int l){
             file = f;
             offset = o;
             length = l;
         }
         public byte[] getBytes(){
             return substring(file.bytes, offset, offset+length);
+        }
+
+        @Override
+        public String toString() {
+            return "File: "+file.fileName+" Offset: "+offset;
         }
     }
 
