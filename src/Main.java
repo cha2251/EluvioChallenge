@@ -49,7 +49,7 @@ public class Main {
         boolean inSame = false; //flag
         for (int i = 0; i < file1.bytes.length-1; i++){
             for (int j = 0; j < file2.bytes.length-1; j++){
-                if (file1.bytes[i] == file2.bytes[j]){ //found two equeal bytes
+                if (i+currLength < file1.bytes.length && file1.bytes[i+currLength] == file2.bytes[j]){ //found two equeal bytes. Have to increase i to keep up with j
                     if (inSame){//aready in a substring? add to length
                         currLength++;
                     }else { //otherwise, start one
