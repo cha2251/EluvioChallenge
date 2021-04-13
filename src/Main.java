@@ -21,10 +21,13 @@ public class Main {
                     strands.add(newStrands[0]);
                     strands.add(newStrands[1]);
                 }
-                if(strands.get(0).getBytes() == newStrands[0].getBytes()){ //Found another file that matches our current longest string
-                    System.out.println("HIT");
-                    strands.add(newStrands[0]);
-                    strands.add(newStrands[1]);
+                if(Arrays.equals(strands.get(0).getBytes(),newStrands[0].getBytes())){ //Found another file that matches our current longest string
+                    if(!strands.contains(newStrands[0])){
+                        strands.add(newStrands[0]);
+                    }
+                    if(!strands.contains(newStrands[1])){
+                        strands.add(newStrands[1]);
+                    }
                 }
             }
         }
